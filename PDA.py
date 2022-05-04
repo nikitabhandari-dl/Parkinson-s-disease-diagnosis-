@@ -162,3 +162,30 @@ plt.title('ROC-AUC (ML_technique-LASSO)',fontsize=14)
 plt.legend(loc="lower right", prop={'size': 10})
 plt.show()
 
+
+#SHAP
+import shap
+#helps you organize your javascript 
+shap.initjs()
+# use Kernel SHAP to explain test set predictions
+shap_explainer = shap.KernelExplainer(model.predict_proba, x_train_l1, link="logit")   
+shap_values = shap_explainer.shap_values(x_test_l1, nsamples=150, l1_reg='num_features(10)')
+#Print the length of shap values and each element
+print(f'length of shap values -> n_classes: {len(shap_values)}')
+print(f'length of each element values: {shap_values[0].shape}')
+x_test_l1_df=pd.DataFrame(x_test_l1)
+idx = pd.Index(selected_feat)
+idx1=idx.tolist()
+##Explaining a Single Prediction
+print(f'Prediction for 1st sample in test data: {model.predict_proba(x_test_l1_df.iloc[[0],:])[0]}')
+shap.initjs()
+shap.force_plot(shap_explainer.expected_value[0], shap_values[0][0,:],x_test_l1_df.iloc[0,:], link='logit')  
+#Explaining predictions for all samples
+shap.initjs()
+shap.force_plot(shap_explainer.expected_value[0], shap_values[0], x_test_l1_df)     
+shap.initjs()
+shap.force_plot(shap_explainer.expected_value[1], shap_values[1], x_test_l1_df)
+#Shap summary plot
+shap.summary_plot(shap_values, x_test_l1_df)                     
+shap.summary_plot(shap_values[0], x_test_l1_df)
+                     
