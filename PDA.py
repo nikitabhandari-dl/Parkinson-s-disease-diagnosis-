@@ -30,11 +30,9 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 import xgboost as xgb
-##### Build ML model and compare performance
-from sklearn.metrics import recall_score, precision_score, classification_report,accuracy_score,confusion_matrix, roc_curve, auc, roc_curve,accuracy_score,plot_confusion_matrix,make_scorer
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn import model_selection
+#from sklearn.model_selection import KFold
+#from sklearn.model_selection import cross_val_score
+#from sklearn import model_selection
 
 
 
@@ -124,7 +122,7 @@ print(final_df1.shape)
 # In[45]:
 
 
-### StratifiedKFold----- SVM  ###
+### StratifiedKFold ###
 
 
 # In[49]:
