@@ -11,7 +11,7 @@ Diffential Gene Expression Analysis
 LASSO regression
 Ridge regression
 ```
-And the following list of classification machine learning algorithms:
+And the following list of supevised machine learning algorithms:
 ```
 K-nearest neighbpor
 Support vector Machine
