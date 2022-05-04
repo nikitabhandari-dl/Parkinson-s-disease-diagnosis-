@@ -6,11 +6,11 @@ This project implements three features selection techniques intended for diament
 
 Current version of project provides the following list of feature selection algorithms:
 
-'''
+```
 Diffential Gene Expression Analysis
 LASSO regression
 Ridge regression
-'''
+```
 And the following list of classification machine learning algorithms:
 
 K-nearest neighbpor
