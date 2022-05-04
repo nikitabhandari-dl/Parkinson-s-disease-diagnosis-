@@ -76,58 +76,18 @@ print('features with coefficients shrank to zero: {}'.format(
 x_l1 = sel.transform(df_new)
 x_l1=pd.DataFrame(x_l1, columns=selected_feat)
 x_l1.head()
-
-
+#Train-test split
 x_train, x_test, y_train, y_test = train_test_split(x_l1,Y,test_size=0.15, stratify=Y)
-
-
-# In[39]:
-
-
 x_train.head()
-
-
-# In[40]:
-
-
 x_train.shape
 
-
-# In[41]:
-
-
 ### Combine x_l1 and Y #####
-
-
-# In[42]:
-
-
 strtied_dataset1 = [x_l1, Y1]
-
 final_df1 = pd.concat(strtied_dataset1, sort=False, axis=1)
-
-
-# In[43]:
-
-
 final_df1.head()
-
-
-# In[44]:
-
-
 print(final_df1.shape)
 
-
-# In[45]:
-
-
 ### StratifiedKFold ###
-
-
-# In[49]:
-
-
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
