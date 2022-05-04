@@ -22,3 +22,4 @@ Naive Bayes
 Gradient Boost
 ```
 More implementation details of the above methods can be found here:
+>https://github.com/nikitabhandari-dl/Parkinson-s-disease-diagnosis-/blob/main/PDA.py
