@@ -12,7 +12,7 @@ LASSO regression
 Ridge regression
 ```
 And the following list of classification machine learning algorithms:
-
+```
 K-nearest neighbpor
 Support vector Machine
 Logistic Regression
@@ -20,5 +20,5 @@ Decision Tree
 Random Forest
 Naive Bayes
 Gradient Boost
-
+```
 More implementation details of the above methods can be found here:
