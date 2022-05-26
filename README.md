@@ -1,6 +1,6 @@
 # Parkinson's-disease-diagnosis
 Machine learning methods for feature selection and classification of Parkinson's disease cases and healthy controls. For metadata analysis please reffer following link:
-https://github.com/sukeshini321khandagale/Parkinsons_datasets_preprocessing
+"https://github.com/sukeshini321khandagale/Parkinsons_datasets_preprocessing"
 
 # Description
 This project implements three features selection techniques intended for diamentionality reduction and compared the classification performance of various machine learning techniques.
