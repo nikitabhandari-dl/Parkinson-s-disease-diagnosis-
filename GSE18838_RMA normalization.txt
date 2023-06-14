@@ -1,0 +1,177 @@
+getwd()
+setwd("C:/Users/91805/Desktop/Review Paper Folder/Microarray gene expression data analysis from review papers/RMA normalization")
+
+install.packages("BiocManager")
+BiocManager::install("EnrichmentBrowser")
+BiocManager::install("hgu133a.db")
+BiocManager::install("hgu133b.db")
+BiocManager::install("hgu133plus2.db")
+BiocManager::install("a4Base")
+BiocManager::install("oligo")
+BiocManager::install("EnrichmentBrowser")
+BiocManager::install("limma")
+BiocManager::install("illuminaio")
+BiocManager::install("sva")
+install.packages("ggplot2")
+install.packages("plyr")
+install.packages("ReadAffy")
+install.packages("HGNChelper")
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("pd.huex.1.0.st.v2")
+
+
+install.packages("tidyverse")
+if (!require("BiocManager", ))
+  install.packages("BiocManager")
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("pd.huex.1.0.st.v2")
+
+BiocManager::install("GEOquery")
+BiocManager::install("hgu133plus2.db")
+
+
+getwd()
+##calling library for function##
+library(tidyverse)
+library(GEOquery)
+library(BiocManager)
+
+#library(affy)
+library(oligo) 
+library(Biobase)
+library(preprocessCore)
+library(limma)
+library(sva)
+library("annotate")
+library("a4Base")
+library("EnrichmentBrowser")
+library(ggfortify)
+library(tibble)
+library(plyr)
+library(ggplot2)
+library(limma)
+library(illuminaio)
+library(lumi)
+library(affy)
+library(org.Hs.eg.db)
+library(HGNChelper)
+
+#### Nikita bhandari Code###############
+## get suppliementory files
+#getGEOSuppFiles("GSE18838")
+#A folder is created GSE18838
+## all .cel files are stored in the folder GSE18838 as GSE18838_RAW.tar
+
+##Now uncompresses the tar files
+##untar files
+#untar("GSE18838/GSE18838_RAW.tar", exdir='data/')
+
+## reading in .cel files
+#raw.data <- oligo::read.celfiles(celfile.path="C:/Users/91805/Desktop/Review Paper Folder/Microarray gene expression data analysis from review papers/RMA normalization/data/")
+
+
+##############################################################################################################################
+
+celpath = ("C:/Users/91805/Desktop/Review Paper Folder/Microarray gene expression data analysis from review papers/RMA normalization/PD_Datasets/GSE18838_RAW" )
+list = list.files(celpath,full.names=TRUE)
+GSE18838 = read.celfiles(list)
+Norm1<- oligo::rma(GSE18838, target="core")
+par(mar=c(5,5,5,5))
+
+oligo::boxplot(GSE18838, target="core", names=colnames(GSE18838), main= "GSE18838 Raw Data", 
+               las=2, ylab="Log2 intensities",
+               cex.lab=0.75, cex.axis=0.75, cex.main=1)
+
+
+oligo::boxplot(Norm1, target="core", names=colnames(Norm1), main= "GSE18838 Normalized Data", 
+              las=2, ylab="Log2 intensities",
+              cex.lab=0.75, cex.axis=0.75, cex.main=1)
+
+
+
+# Next Probe to gene symbol
+#####################
+# Df for normalized eset
+
+GSE18838_RMAdf=as.data.frame(exprs(Norm1))
+GSE18838_RMAdf=rownames_to_column(GSE18838_RMAdf, "featurenames")
+
+# Gene annotation using getNetAffy
+
+featureData(Norm1)= getNetAffx(Norm1, "transcript")
+Anofea18838=featureData(Norm1)
+
+GSE18838_GIDs= as.data.frame(Anofea18838@data)
+GSE18838_GIDs= rownames_to_column(GSE18838_GIDs, "featurenames")
+GSE18838_GIDs= data.frame(GSE18838_GIDs$featurenames, GSE18838_GIDs$geneassignment)
+dim(GSE18838_GIDs)
+
+# Add geneInfo to Normalised data
+
+GSE18838_merge=merge(GSE18838_RMAdf, GSE18838_GIDs, by.x="featurenames", by.y= "GSE18838_GIDs.featurenames")
+
+# identify unannotated genes and remove
+
+table(is.na(GSE18838_merge$GSE18838_GIDs.geneassignment)) 
+
+
+# Remove rows with un-assigned gene symbol
+GSE18838_NAs=GSE18838_merge[!rowSums((is.na(GSE18838_merge))),]
+dim(GSE18838_NAs)
+
+# Separate/split gene symbols from the other information
+# And add new columns to the same df
+
+GSE18838_NAs[,c(31:32)]=str_split_fixed(GSE18838_NAs$GSE18838_GIDs.geneassignment, "//", 3)
+
+# Striplit may introduce white spaces
+# V32 has gene symbols
+
+GSE18838_NAs$V32=trimws(GSE18838_NAs$V32)
+
+# Check for NA
+
+table(is.na(GSE18838_NAs$V32))
+
+# Get HGNC symbols
+
+gSymbols=GSE18838_NAs$V32
+
+check.Symbols=checkGeneSymbols(gSymbols, unmapped.as.na = TRUE, map = NULL,
+                               species = "human")
+
+# Remove un-assign genes
+
+table(is.na(check.Symbols$Suggested.Symbol))
+check.Symbols.df=na.omit(check.Symbols)
+table(is.na(check.Symbols.df$Suggested.Symbol))
+
+# Add HGNC symbols to normalised exp
+GSE18838.df=merge(GSE18838_NAs,check.Symbols.df, by.x= "V32", by.y="x")
+dim(GSE18838.df)#17638
+view(GSE18312.df)
+
+# Avereps 
+
+GSE18838_avereps=limma::avereps(GSE18838.df, ID= GSE18838.df$Suggested.Symbol) %>% data.frame # 
+dim(GSE18838_avereps)#17131
+View(GSE18838_avereps)
+
+# Keep only relevant info
+
+GSE18838_avereps.df=GSE18838_avereps[,-c(1,2,31:33)]
+View(GSE18838_avereps.df)
+
+GSE18838_final=column_to_rownames(GSE18838_avereps.df, "Suggested.Symbol")
+View(GSE18838_final)
+
+getwd()
+write.csv(GSE18838_final, "GSE18838_final.csv", row.names=T)
+
+
